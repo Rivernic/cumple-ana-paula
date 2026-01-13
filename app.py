@@ -10,26 +10,25 @@ import streamlit.components.v1 as components
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="Mis 15 - Ana Paula", page_icon="👑", layout="centered")
 
-# --- VARIABLES ---
+# --- VARIABLES ACTUALIZADAS ---
 NOMBRE_CUMPLEAÑERA = "Ana Paula Scotta"
-FECHA_TEXTO = "14 de Abril de 2026, 21:00 hs"
-TARGET_DATE_JS = "Apr 14, 2026 21:00:00" 
+FECHA_TEXTO = "11 de Abril de 2026, 21:00 hs" # <--- CAMBIO AQUÍ
+TARGET_DATE_JS = "Apr 11, 2026 21:00:00"      # <--- CAMBIO AQUÍ
 LUGAR_NOMBRE = "Salón 'El Fortín'"
 MAPA_LINK = "https://maps.app.goo.gl/F5ZfASp4LdbSMhBh9?g_st=iw"
 FECHA_LIMITE = "10 de Marzo"
-# OJO: Recuerda que en la nube esto lo lee de los Secrets, pero para local usa las variables
-# Si estás en local y tira error, descomenta las lineas de abajo con tus datos reales.
+
+# Intentamos leer secrets de la nube, si no usamos fallback para local
 try:
     EMAIL_SENDER = st.secrets["EMAIL_SENDER"]
     EMAIL_PASSWORD = st.secrets["EMAIL_PASSWORD"]
 except:
-    # Fallback para correr en local si no hay secrets configurados
     EMAIL_SENDER = "nicomartriver@gmail.com"
     EMAIL_PASSWORD = "rews ccbd gxee ksxm"
 
 ARCHIVO_EXCEL = "invitados_cumple.xlsx"
 
-# --- CSS DEFINITIVO (FONDO ANIMADO + RESPONSIVE + OCULTAR UI) ---
+# --- CSS DE "FUERZA BRUTA" PARA LIMPIEZA VISUAL ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Great+Vibes&display=swap');
@@ -39,24 +38,21 @@ st.markdown("""
         background: transparent !important;
     }
 
-    /* 2. OCULTAR LA INTERFAZ DE STREAMLIT (EL BOTÓN ROJO Y EL MENÚ) */
-    [data-testid="stToolbar"] {
-        display: none;
-    }
-    [data-testid="stManageAppButton"] {
-        display: none;
-    }
-    header {
-        visibility: hidden !important;
-    }
-    footer {
-        visibility: hidden !important;
-    }
-    #MainMenu {
-        visibility: hidden !important;
-    }
+    /* 2. OCULTAR TODO RASTRO DE STREAMLIT (ELIMINACIÓN AGRESIVA) */
+    /* Ocultar barra superior */
+    header {visibility: hidden !important;}
+    /* Ocultar menú hamburguesa */
+    #MainMenu {visibility: hidden !important;}
+    /* Ocultar footer "Made with Streamlit" */
+    footer {visibility: hidden !important;}
+    /* Ocultar barra de herramientas del desarrollador (donde está la corona) */
+    div[data-testid="stToolbar"] {visibility: hidden !important; height: 0px !important;}
+    /* Ocultar la decoración de colores de arriba */
+    div[data-testid="stDecoration"] {visibility: hidden !important; height: 0px !important;}
+    /* Ocultar widget de estado */
+    div[data-testid="stStatusWidget"] {visibility: hidden !important;}
 
-    /* 3. CAPA DE ANIMACIÓN (ÁREA COMPLETA) */
+    /* 3. CAPA DE ANIMACIÓN (FONDO) */
     .area {
         background: #FFF0F5;
         background: -webkit-linear-gradient(to left, #FFF0F5, #FCE4EC);  
@@ -85,7 +81,7 @@ st.markdown("""
         list-style: none;
         width: 20px;
         height: 20px;
-        background: rgba(233, 30, 99, 0.2); /* Rosa transparente sutil */
+        background: rgba(233, 30, 99, 0.2);
         animation: animate 25s linear infinite;
         bottom: -150px;
         border-radius: 50%;
@@ -110,14 +106,14 @@ st.markdown("""
     /* 4. TARJETA PRINCIPAL */
     .main .block-container {
         background-color: rgba(255, 255, 255, 0.92) !important;
-        padding: 2rem 1.5rem; /* Ajusté un poco el padding lateral para ganar espacio en celus */
+        padding: 2rem 1.5rem;
         border-radius: 25px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         max-width: 700px;
         margin-top: 1rem;
     }
 
-    /* 5. RESTO DEL DISEÑO */
+    /* 5. DISEÑO DE ELEMENTOS */
     .stTextInput input, .stNumberInput input, .stTextArea textarea {
         background-color: #FFFFFF !important;
         color: #333333 !important;
@@ -159,7 +155,7 @@ st.markdown("""
         font-family: 'Great Vibes', cursive;
         color: #D81B60 !important;
         text-align: center;
-        font-size: 3.5rem !important; /* Achiqué un poco para mobile */
+        font-size: 3.5rem !important;
         margin-bottom: 5px;
         font-weight: 400;
         text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
@@ -214,7 +210,7 @@ st.markdown("""
     </div >
     """, unsafe_allow_html=True)
 
-# --- JAVASCRIPT: CUENTA REGRESIVA (FIX PARA CELULAR) ---
+# --- JAVASCRIPT: CUENTA REGRESIVA OPTIMIZADA ---
 def mostrar_contador_js():
     contador_html = f"""
     <style>
@@ -223,7 +219,7 @@ def mostrar_contador_js():
         .countdown-container {{
             display: flex;
             justify-content: center;
-            gap: 15px; /* Espacio normal para PC */
+            gap: 15px;
             margin-bottom: 30px;
             font-family: 'Quicksand', sans-serif;
         }}
@@ -234,7 +230,7 @@ def mostrar_contador_js():
             padding: 10px;
             border-radius: 18px;
             text-align: center;
-            min-width: 75px; /* Ancho normal */
+            min-width: 75px;
             border: 2px solid #FCE4EC;
             box-shadow: 0 4px 10px rgba(233, 30, 99, 0.1);
         }}
@@ -252,21 +248,21 @@ def mostrar_contador_js():
             color: #880E4F;
         }}
 
-        /* --- MAGIC FIX PARA CELULARES --- */
+        /* FIX MOBILE PARA NUMEROS QUE ENTRAN EN PANTALLA */
         @media only screen and (max-width: 480px) {{
             .countdown-container {{
-                gap: 5px !important; /* Menos espacio entre cajitas */
+                gap: 5px !important;
             }}
             .time-box {{
-                min-width: 55px !important; /* Cajitas más angostas */
-                padding: 5px !important;    /* Menos relleno interno */
+                min-width: 55px !important;
+                padding: 5px !important;
                 border-radius: 12px !important;
             }}
             .time-number {{
-                font-size: 18px !important; /* Números más chicos */
+                font-size: 18px !important;
             }}
             .time-label {{
-                font-size: 8px !important; /* Letra más chica */
+                font-size: 8px !important;
                 letter-spacing: 0px !important;
             }}
         }}
@@ -425,4 +421,3 @@ with st.form("form_fiesta"):
                 "Mensaje": observaciones
             })
             st.success(f"¡Gracias {nombre}! Confirmado.")
-
