@@ -12,35 +12,60 @@ st.set_page_config(page_title="Mis 15 - Ana Paula", page_icon="👑", layout="ce
 
 # --- VARIABLES ---
 NOMBRE_CUMPLEAÑERA = "Ana Paula Scotta"
-FECHA_TEXTO = "11 de Abril de 2026, 21:00 hs"
-TARGET_DATE_JS = "Apr 11, 2026 21:00:00" 
+FECHA_TEXTO = "14 de Abril de 2026, 21:00 hs"
+TARGET_DATE_JS = "Apr 14, 2026 21:00:00" 
 LUGAR_NOMBRE = "Salón 'El Fortín'"
 MAPA_LINK = "https://maps.app.goo.gl/F5ZfASp4LdbSMhBh9?g_st=iw"
 FECHA_LIMITE = "10 de Marzo"
-EMAIL_SENDER = st.secrets["EMAIL_SENDER"]
-EMAIL_PASSWORD = st.secrets["EMAIL_PASSWORD"]
+# OJO: Recuerda que en la nube esto lo lee de los Secrets, pero para local usa las variables
+# Si estás en local y tira error, descomenta las lineas de abajo con tus datos reales.
+try:
+    EMAIL_SENDER = st.secrets["EMAIL_SENDER"]
+    EMAIL_PASSWORD = st.secrets["EMAIL_PASSWORD"]
+except:
+    # Fallback para correr en local si no hay secrets configurados
+    EMAIL_SENDER = "nicomartriver@gmail.com"
+    EMAIL_PASSWORD = "rews ccbd gxee ksxm"
+
 ARCHIVO_EXCEL = "invitados_cumple.xlsx"
 
-# --- CSS DEFINITIVO (FONDO ANIMADO VISIBLE) ---
+# --- CSS DEFINITIVO (FONDO ANIMADO + RESPONSIVE + OCULTAR UI) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Great+Vibes&display=swap');
 
-    /* 1. ELIMINAMOS EL FONDO POR DEFECTO DE STREAMLIT PARA VER LA ANIMACIÓN */
+    /* 1. ELIMINAMOS EL FONDO POR DEFECTO DE STREAMLIT */
     .stApp {
         background: transparent !important;
     }
 
-    /* 2. CAPA DE ANIMACIÓN (ÁREA COMPLETA) */
+    /* 2. OCULTAR LA INTERFAZ DE STREAMLIT (EL BOTÓN ROJO Y EL MENÚ) */
+    [data-testid="stToolbar"] {
+        display: none;
+    }
+    [data-testid="stManageAppButton"] {
+        display: none;
+    }
+    header {
+        visibility: hidden !important;
+    }
+    footer {
+        visibility: hidden !important;
+    }
+    #MainMenu {
+        visibility: hidden !important;
+    }
+
+    /* 3. CAPA DE ANIMACIÓN (ÁREA COMPLETA) */
     .area {
-        background: #FFF0F5; /* Fondo base rosa pálido */
-        background: -webkit-linear-gradient(to left, #8f94fb, #4e54c8);  
+        background: #FFF0F5;
+        background: -webkit-linear-gradient(to left, #FFF0F5, #FCE4EC);  
         width: 100%;
         height: 100vh;
         position: fixed;
         top: 0;
         left: 0;
-        z-index: -1; /* Detrás de todo */
+        z-index: -1;
     }
 
     .circles {
@@ -60,13 +85,12 @@ st.markdown("""
         list-style: none;
         width: 20px;
         height: 20px;
-        background: rgba(233, 30, 99, 0.4); /* Color de los globos (Rosa fuerte transparente) */
+        background: rgba(233, 30, 99, 0.2); /* Rosa transparente sutil */
         animation: animate 25s linear infinite;
         bottom: -150px;
-        border-radius: 50%; /* Hacemos que sean círculos */
+        border-radius: 50%;
     }
 
-    /* CONFIGURACIÓN DE CADA GLOBO (TAMAÑO, POSICIÓN Y VELOCIDAD) */
     .circles li:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
     .circles li:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
     .circles li:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
@@ -79,29 +103,21 @@ st.markdown("""
     .circles li:nth-child(10){ left: 85%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 11s; }
 
     @keyframes animate {
-        0% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 1;
-            border-radius: 50%;
-        }
-        100% {
-            transform: translateY(-1000px) rotate(720deg);
-            opacity: 0;
-            border-radius: 50%;
-        }
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 50%; }
+        100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
     }
 
-    /* 3. ESTILOS DE LA TARJETA PRINCIPAL (SOLIDA PARA LEER BIEN) */
+    /* 4. TARJETA PRINCIPAL */
     .main .block-container {
-        background-color: rgba(255, 255, 255, 0.90) !important; /* Blanca casi solida */
-        padding: 3rem 2rem;
+        background-color: rgba(255, 255, 255, 0.92) !important;
+        padding: 2rem 1.5rem; /* Ajusté un poco el padding lateral para ganar espacio en celus */
         border-radius: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         max-width: 700px;
-        margin-top: 2rem;
+        margin-top: 1rem;
     }
 
-    /* 4. RESTO DEL DISEÑO (INPUTS, FUENTES, ETC) */
+    /* 5. RESTO DEL DISEÑO */
     .stTextInput input, .stNumberInput input, .stTextArea textarea {
         background-color: #FFFFFF !important;
         color: #333333 !important;
@@ -125,17 +141,7 @@ st.markdown("""
         height: 100%;
         transition: transform 0.3s ease;
     }
-    .info-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(233, 30, 99, 0.15);
-    }
-    .info-titulo {
-        font-weight: bold;
-        color: #D81B60;
-        font-size: 1.1rem;
-        margin-bottom: 5px;
-        display: block;
-    }
+    
     .mapa-btn {
         display: inline-block;
         margin-top: 10px;
@@ -153,7 +159,7 @@ st.markdown("""
         font-family: 'Great Vibes', cursive;
         color: #D81B60 !important;
         text-align: center;
-        font-size: 4rem !important;
+        font-size: 3.5rem !important; /* Achiqué un poco para mobile */
         margin-bottom: 5px;
         font-weight: 400;
         text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
@@ -174,7 +180,7 @@ st.markdown("""
         color: #880E4F !important;
         font-weight: 700 !important;
         font-family: 'Quicksand', sans-serif !important;
-        font-size: 15px !important;
+        font-size: 14px !important;
     }
     
     .seccion-titulo {
@@ -199,72 +205,80 @@ st.markdown("""
         transition: 0.3s;
         box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3);
     }
-    div.stButton > button:first-child:hover {
-        transform: scale(1.03);
-        box-shadow: 0 8px 20px rgba(233, 30, 99, 0.4);
-    }
-
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
     </style>
     
     <div class="area" >
         <ul class="circles">
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
+            <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
         </ul>
     </div >
     """, unsafe_allow_html=True)
 
-# --- JAVASCRIPT: CUENTA REGRESIVA ---
+# --- JAVASCRIPT: CUENTA REGRESIVA (FIX PARA CELULAR) ---
 def mostrar_contador_js():
     contador_html = f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap');
+        
         .countdown-container {{
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 15px; /* Espacio normal para PC */
             margin-bottom: 30px;
             font-family: 'Quicksand', sans-serif;
         }}
+        
         .time-box {{
             background-color: #FFFFFF;
             color: #D81B60;
             padding: 10px;
             border-radius: 18px;
             text-align: center;
-            min-width: 75px;
+            min-width: 75px; /* Ancho normal */
             border: 2px solid #FCE4EC;
             box-shadow: 0 4px 10px rgba(233, 30, 99, 0.1);
         }}
+        
         .time-number {{
             font-size: 26px;
             font-weight: bold;
             display: block;
         }}
+        
         .time-label {{
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: #880E4F;
         }}
+
+        /* --- MAGIC FIX PARA CELULARES --- */
+        @media only screen and (max-width: 480px) {{
+            .countdown-container {{
+                gap: 5px !important; /* Menos espacio entre cajitas */
+            }}
+            .time-box {{
+                min-width: 55px !important; /* Cajitas más angostas */
+                padding: 5px !important;    /* Menos relleno interno */
+                border-radius: 12px !important;
+            }}
+            .time-number {{
+                font-size: 18px !important; /* Números más chicos */
+            }}
+            .time-label {{
+                font-size: 8px !important; /* Letra más chica */
+                letter-spacing: 0px !important;
+            }}
+        }}
     </style>
+
     <div class="countdown-container" id="countdown">
         <div class="time-box"><span class="time-number" id="days">00</span><span class="time-label">Días</span></div>
         <div class="time-box"><span class="time-number" id="hours">00</span><span class="time-label">Hs</span></div>
         <div class="time-box"><span class="time-number" id="minutes">00</span><span class="time-label">Min</span></div>
         <div class="time-box"><span class="time-number" id="seconds">00</span><span class="time-label">Seg</span></div>
     </div>
+
     <script>
     var countDownDate = new Date("{TARGET_DATE_JS}").getTime();
     var x = setInterval(function() {{
@@ -343,7 +357,6 @@ st.markdown("<p class='subtitulo'>MIS 15 AÑOS</p>", unsafe_allow_html=True)
 mostrar_contador_js()
 st.write("---")
 
-# INFO DE FECHA Y LUGAR
 c1, c2 = st.columns(2)
 with c1:
     st.markdown(f"""
@@ -387,7 +400,6 @@ with st.form("form_fiesta"):
     vegetarianos = col_menu2.number_input("Vegetarianos", min_value=0, value=0)
     veganos = col_menu3.number_input("Veganos", min_value=0, value=0)
 
-    # Validación visual de cantidad
     if (celiacos + vegetarianos + veganos) > (adultos + menores):
         st.warning("⚠️ ¡Ojo! Hay más pedidos de menús especiales que invitados totales.")
 
