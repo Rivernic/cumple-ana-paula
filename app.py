@@ -425,3 +425,4 @@ with st.form("form_fiesta"):
                 "Mensaje": observaciones
             })
             st.success(f"¡Gracias {nombre}! Confirmado.")
+
