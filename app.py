@@ -16,7 +16,7 @@ FECHA_TEXTO = "11 de Abril de 2026, 21:00 hs" # <--- CAMBIO AQUÍ
 TARGET_DATE_JS = "Apr 11, 2026 21:00:00"      # <--- CAMBIO AQUÍ
 LUGAR_NOMBRE = "Salón 'El Fortín'"
 MAPA_LINK = "https://maps.app.goo.gl/F5ZfASp4LdbSMhBh9?g_st=iw"
-FECHA_LIMITE = "10 de Marzo"
+FECHA_LIMITE = "30 de Marzo"
 
 # Intentamos leer secrets de la nube, si no usamos fallback para local
 try:
@@ -421,3 +421,4 @@ with st.form("form_fiesta"):
                 "Mensaje": observaciones
             })
             st.success(f"¡Gracias {nombre}! Confirmado.")
+
