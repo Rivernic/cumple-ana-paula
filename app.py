@@ -24,7 +24,7 @@ try:
     EMAIL_PASSWORD = st.secrets["EMAIL_PASSWORD"]
 except:
     EMAIL_SENDER = "nicomartriver@gmail.com"
-    EMAIL_PASSWORD = "rews ccbd gxee ksxm"
+    EMAIL_PASSWORD = "loyy pljb vaaq dmad"
 
 ARCHIVO_EXCEL = "invitados_cumple.xlsx"
 
@@ -421,4 +421,5 @@ with st.form("form_fiesta"):
                 "Mensaje": observaciones
             })
             st.success(f"¡Gracias {nombre}! Confirmado.")
+
 
