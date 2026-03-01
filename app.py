@@ -422,4 +422,7 @@ with st.form("form_fiesta"):
             })
             st.success(f"¡Gracias {nombre}! Confirmado.")
 
+if os.path.exists(ARCHIVO_EXCEL):
+    with open(ARCHIVO_EXCEL, "rb") as f:
+        st.download_button("Descargar Lista de Invitados", f, file_name=ARCHIVO_EXCEL)
 
